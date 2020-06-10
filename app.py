@@ -1,9 +1,10 @@
 # import modules
-from flask import Flask, render_template, flash, redirect, url_for, session, logging
+from flask import Flask, render_template, flash, redirect, url_for, session, request, logging
 from data import Articles
 from flask_mysqldb import MySQL
 from wtforms import Form, StringField, TextAreaField, PasswordField, validators
 from passlib.hash import sha256_crypt
+from functools import wraps
 
 # flask instance
 app = Flask(__name__)
@@ -40,6 +41,12 @@ class RegisterForm(Form):
     ])
     confirm = PasswordField('Confirm Password')
 
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    form = RegisterForm(request.form)
+    if request.method == 'POST' and form.validate():
+        return render_template('register.html')
+    return render_template('register.html', form=form)
 # run
 if __name__ == '__main__':
     app.run(debug=True)
